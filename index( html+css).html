@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Transmission Systems | Calculator</title>
+    <style>
+        :root {
+            --ink: #17212b;
+            --muted: #667085;
+            --line: #d8dee7;
+            --panel: #ffffff;
+            --surface: #f4f7fa;
+            --charcoal: #1e2933;
+            --teal: #0f766e;
+            --teal-dark: #115e59;
+            --gold: #b7791f;
+            --success: #166534;
+            --error: #b42318;
+            --shadow: 0 18px 45px rgba(23, 33, 43, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(244, 247, 250, 0.96)),
+                repeating-linear-gradient(90deg, rgba(30, 41, 51, 0.04) 0 1px, transparent 1px 72px),
+                repeating-linear-gradient(0deg, rgba(30, 41, 51, 0.035) 0 1px, transparent 1px 72px);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            align-items: center;
+            background: var(--charcoal);
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            padding: 16px clamp(20px, 5vw, 72px);
+        }
+
+        .brand {
+            align-items: center;
+            display: flex;
+            gap: 12px;
+            font-weight: 700;
+        }
+
+        .brand-mark {
+            align-items: center;
+            background: #ffffff;
+            border-radius: 8px;
+            color: var(--teal-dark);
+            display: inline-flex;
+            font-size: 0.9rem;
+            height: 38px;
+            justify-content: center;
+            width: 44px;
+        }
+
+        .topbar-note {
+            color: #cbd5df;
+            font-size: 0.92rem;
+        }
+
+        .page {
+            margin: 0 auto;
+            max-width: 1180px;
+            padding: 38px clamp(18px, 4vw, 42px) 30px;
+        }
+
+        .intro {
+            align-items: stretch;
+            display: grid;
+            gap: 24px;
+            grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+            margin-bottom: 26px;
+        }
+
+        .intro-copy {
+            padding: 12px 0;
+        }
+
+        .eyebrow {
+            color: var(--teal-dark);
+            font-size: 0.78rem;
+            font-weight: 800;
+            margin: 0 0 10px;
+            text-transform: uppercase;
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            color: var(--charcoal);
+            font-size: clamp(2.15rem, 4vw, 4.1rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 16px;
+        }
+
+        .lead {
+            color: #475467;
+            font-size: 1.08rem;
+            line-height: 1.7;
+            max-width: 720px;
+        }
+
+        .metric-row {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-top: 26px;
+        }
+
+        .metric {
+            border-left: 3px solid var(--teal);
+            padding: 2px 0 2px 14px;
+        }
+
+        .metric strong {
+            color: var(--charcoal);
+            display: block;
+            font-size: 1.05rem;
+        }
+
+        .metric span {
+            color: var(--muted);
+            display: block;
+            font-size: 0.88rem;
+            margin-top: 4px;
+        }
+
+        .system-visual {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            min-height: 258px;
+            overflow: hidden;
+            padding: 24px;
+            position: relative;
+        }
+
+        .system-visual::before {
+            background: linear-gradient(90deg, rgba(15, 118, 110, 0.12), rgba(183, 121, 31, 0.12));
+            content: "";
+            height: 6px;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .visual-title {
+            color: var(--muted);
+            font-size: 0.84rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .line-diagram {
+            align-items: center;
+            display: grid;
+            gap: 16px;
+            grid-template-columns: auto 1fr auto;
+        }
+
+        .node {
+            align-items: center;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            display: grid;
+            height: 82px;
+            justify-items: center;
+            min-width: 82px;
+            padding: 10px;
+        }
+
+        .node-icon {
+            align-items: center;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 50%;
+            color: var(--teal-dark);
+            display: inline-flex;
+            font-size: 1.3rem;
+            font-weight: 800;
+            height: 38px;
+            justify-content: center;
+            width: 38px;
+        }
+
+        .node span {
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .line {
+            background: linear-gradient(90deg, var(--teal), var(--gold));
+            height: 4px;
+            position: relative;
+        }
+
+        .line::before,
+        .line::after {
+            background: var(--charcoal);
+            bottom: -48px;
+            content: "";
+            position: absolute;
+            top: -42px;
+            width: 2px;
+        }
+
+        .line::before {
+            left: 28%;
+        }
+
+        .line::after {
+            right: 28%;
+        }
+
+        .line-labels {
+            color: var(--muted);
+            display: flex;
+            font-size: 0.78rem;
+            font-weight: 700;
+            justify-content: space-between;
+            margin-top: 52px;
+        }
+
+        .workspace {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: minmax(0, 1fr) 320px;
+        }
+
+        .calculator-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .calc-card,
+        .summary-panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: 0 12px 30px rgba(23, 33, 43, 0.08);
+        }
+
+        .calc-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            padding: 24px;
+        }
+
+        .card-header {
+            align-items: flex-start;
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-header h2,
+        .summary-panel h2 {
+            color: var(--charcoal);
+            font-size: 1.35rem;
+            line-height: 1.25;
+            margin-bottom: 0;
+        }
+
+        .formula {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 999px;
+            color: #9a3412;
+            flex: 0 0 auto;
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 8px 10px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        label {
+            color: #344054;
+            display: flex;
+            font-size: 0.92rem;
+            font-weight: 700;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        label span {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        input {
+            background: #fbfcfd;
+            border: 1px solid #cfd7e3;
+            border-radius: 8px;
+            color: var(--ink);
+            font: inherit;
+            height: 48px;
+            outline: none;
+            padding: 0 14px;
+            transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+            width: 100%;
+        }
+
+        input:focus {
+            background: #ffffff;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        button {
+            align-items: center;
+            border: 0;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            font: inherit;
+            font-weight: 800;
+            height: 46px;
+            justify-content: center;
+            padding: 0 16px;
+            transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--teal);
+            box-shadow: 0 10px 20px rgba(15, 118, 110, 0.2);
+            color: #ffffff;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: var(--teal-dark);
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #344054;
+        }
+
+        .result-panel {
+            background: #f8fafc;
+            border: 1px dashed #cfd7e3;
+            border-radius: 8px;
+            margin-top: auto;
+            min-height: 112px;
+            padding: 16px;
+        }
+
+        .result-label {
+            color: var(--muted);
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .result-value {
+            color: var(--charcoal);
+            display: block;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-top: 8px;
+        }
+
+        .result-detail {
+            color: var(--muted);
+            display: block;
+            font-size: 0.86rem;
+            line-height: 1.45;
+            margin-top: 6px;
+        }
+
+        .result-panel.is-ready {
+            background: #f0fdfa;
+            border-color: #99f6e4;
+        }
+
+        .result-panel.is-error {
+            background: #fff5f5;
+            border-color: #fecaca;
+        }
+
+        .result-panel.is-error .result-value {
+            color: var(--error);
+            font-size: 1.08rem;
+        }
+
+        .summary-panel {
+            padding: 24px;
+        }
+
+        .summary-panel .eyebrow {
+            margin-bottom: 8px;
+        }
+
+        .insight-list {
+            display: grid;
+            gap: 15px;
+            list-style: none;
+            margin: 22px 0 0;
+            padding: 0;
+        }
+
+        .insight-list li {
+            border-bottom: 1px solid #e7edf4;
+            padding-bottom: 15px;
+        }
+
+        .insight-list li:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .insight-list span {
+            color: var(--muted);
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .insight-list strong {
+            color: var(--charcoal);
+            display: block;
+            font-size: 0.98rem;
+            line-height: 1.45;
+        }
+
+        footer {
+            color: var(--muted);
+            font-size: 0.88rem;
+            margin-top: 28px;
+            text-align: center;
+        }
+
+        @media (max-width: 980px) {
+            .intro,
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-panel {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .metric-row,
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header,
+            .actions {
+                flex-direction: column;
+            }
+
+            .formula,
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+            }
+
+            .system-visual {
+                min-height: 230px;
+                padding: 20px;
+            }
+
+            .line-diagram {
+                gap: 10px;
+                grid-template-columns: 70px 1fr 70px;
+            }
+
+            .node {
+                height: 74px;
+                min-width: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="topbar" aria-label="Project">
+        <div class="brand">
+            <span class="brand-mark">PTS</span>
+            <span>Power Transmission Systems</span>
+        </div>
+        <span class="topbar-note">Engineering Calculator</span>
+    </nav>
+
+    <div class="page">
+        <header class="intro">
+            <div class="intro-copy">
+                <p class="eyebrow">Electrical Power Engineering</p>
+                <h1>Transmission Line Performance Calculator</h1>
+                <p class="lead">A polished analysis interface for estimating line voltage drop and resistive power loss using standard transmission-system relationships.</p>
+                <div class="metric-row" aria-label="Calculation formulas">
+                    <div class="metric">
+                        <strong>V = I x Z</strong>
+                        <span>Voltage drop model</span>
+                    </div>
+                    <div class="metric">
+                        <strong>P = I² x R</strong>
+                        <span>Power loss model</span>
+                    </div>
+                    <div class="metric">
+                        <strong>SI Units</strong>
+                        <span>Ohms, amps, volts, watts</span>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="system-visual" aria-label="Transmission line schematic">
+                <div class="visual-title">Single-line view</div>
+                <div class="line-diagram">
+                    <div class="node">
+                        <span class="node-icon">G</span>
+                        <span>Source</span>
+                    </div>
+                    <div>
+                        <div class="line" aria-hidden="true"></div>
+                        <div class="line-labels">
+                            <span>Impedance</span>
+                            <span>Current</span>
+                            <span>Load</span>
+                        </div>
+                    </div>
+                    <div class="node">
+                        <span class="node-icon">L</span>
+                        <span>Load</span>
+                    </div>
+                </div>
+            </aside>
+        </header>
+
+        <main class="workspace">
+            <section class="calculator-grid" aria-label="Transmission line calculators">
+                <article class="calc-card">
+                    <div class="card-header">
+                        <div>
+                            <p class="eyebrow">Calculator 01</p>
+                            <h2>Voltage Drop</h2>
+                        </div>
+                        <span class="formula">V = I x Z</span>
+                    </div>
+
+                    <form id="calc-form">
+                        <div class="field">
+                            <label for="impedance">Impedance <span>ohms</span></label>
+                            <input type="number" step="any" min="0" id="impedance" placeholder="Example: 6.4" required>
+                        </div>
+                        <div class="field">
+                            <label for="load_current">Load Current <span>amperes</span></label>
+                            <input type="number" step="any" min="0" id="load_current" placeholder="Example: 42" required>
+                        </div>
+                        <div class="actions">
+                            <button type="submit" class="btn-primary">Calculate</button>
+                            <button type="reset" class="btn-secondary">Clear</button>
+                        </div>
+                    </form>
+
+                    <div id="result" class="result-panel" aria-live="polite">
+                        <span class="result-label">Voltage Drop</span>
+                        <strong class="result-value">-- V</strong>
+                        <span class="result-detail">Awaiting line impedance and load current.</span>
+                    </div>
+                </article>
+
+                <article class="calc-card">
+                    <div class="card-header">
+                        <div>
+                            <p class="eyebrow">Calculator 02</p>
+                            <h2>Power Loss</h2>
+                        </div>
+                        <span class="formula">P = I² x R</span>
+                    </div>
+
+                    <form id="power-loss-form">
+                        <div class="field">
+                            <label for="resistance">Resistance <span>ohms</span></label>
+                            <input type="number" step="any" min="0" id="resistance" placeholder="Example: 3.2" required>
+                        </div>
+                        <div class="field">
+                            <label for="load_current_power">Load Current <span>amperes</span></label>
+                            <input type="number" step="any" min="0" id="load_current_power" placeholder="Example: 42" required>
+                        </div>
+                        <div class="actions">
+                            <button type="submit" class="btn-primary">Calculate</button>
+                            <button type="reset" class="btn-secondary">Clear</button>
+                        </div>
+                    </form>
+
+                    <div id="power-loss-result" class="result-panel" aria-live="polite">
+                        <span class="result-label">Power Loss</span>
+                        <strong class="result-value">-- W</strong>
+                        <span class="result-detail">Awaiting conductor resistance and load current.</span>
+                    </div>
+                </article>
+            </section>
+
+            <aside class="summary-panel">
+                <p class="eyebrow">Project Snapshot</p>
+                <h2>Presentation-ready scope</h2>
+                <ul class="insight-list">
+                    <li>
+                        <span>Purpose</span>
+                        <strong>Evaluate line drop and copper losses for a selected transmission section.</strong>
+                    </li>
+                    <li>
+                        <span>Inputs</span>
+                        <strong>Impedance, resistance, and load current with unit-aware labels.</strong>
+                    </li>
+                    <li>
+                        <span>Output</span>
+                        <strong>Formatted engineering values with stable result panels.</strong>
+                    </li>
+                    <li>
+                        <span>Demo</span>
+                        <strong>Runs through Flask or directly as a browser page.</strong>
+                    </li>
+                </ul>
+            </aside>
+        </main>
+
+        <footer>Power Transmission Systems CEP | Technical Interview Demo</footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
